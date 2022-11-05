@@ -9,7 +9,7 @@ public class Cinema implements Serializable { //initialise Cinema
      * For Java Serializable.
      */
     private static final long serialVersionUID = 2L;
-    private Location location; //cineplex of cinema
+    private Location location; //location of cinema
     private String cinemaCode; //unique code for cinema
     private boolean isPlatinum; //true if cinema is of Platinum type
 
@@ -34,11 +34,11 @@ public class Cinema implements Serializable { //initialise Cinema
         this.isPlatinum = isPlatinum;
     }
 
-    public void setCineplex(Location location) { //set cineplex of cinema
+    public void setCineplex(Location location) { //set location of cinema
         this.location = location;
     }
 
-    public Location getCineplex() { //get cineplex of cinema
+    public Location getCineplex() { //get location of cinema
         return location;
     }
 
