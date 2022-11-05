@@ -1,6 +1,6 @@
 package src.model;
 
-import src.model.enums.AgeGroup;
+import src.model.enums.AgeEnum;
 
 /**
  * MovieGoer Class
@@ -19,13 +19,13 @@ public class MovieGoer extends User {
     /**
      * Age group of the movie goer
      */
-    private AgeGroup ageGroup;
+    private AgeEnum ageGroup;
 
     /**
-     * Movie goer constructor using @param userId  @param username @param mobile @param email  @param ageGroup {@link AgeGroup} of movie goer
+     * Movie goer constructor using @param userId  @param username @param mobile @param email  @param ageGroup {@link AgeEnum} of movie goer
      * @param password @param isStaff
      */
-    public MovieGoer(String userId, String username, String mobile, String email, AgeGroup ageGroup, String password,
+    public MovieGoer(String userId, String username, String mobile, String email, AgeEnum ageGroup, String password,
             boolean isStaff) {
         super(userId, username, password, isStaff);
         setMobile(mobile);
@@ -36,14 +36,14 @@ public class MovieGoer extends User {
     /**
      * Sets the {@link AgeGroup} of the movie goer using @param ageGroup
      */
-    public void setAgeGroup(AgeGroup ageGroup) {
+    public void setAgeGroup(AgeEnum ageGroup) {
         this.ageGroup = ageGroup;
     }
 
     /**
      * Gets and @return ageGroup of the movie goer
      */
-    public AgeGroup getAgeGroup() {
+    public AgeEnum getAgeGroup() {
         return ageGroup;
     }
 
