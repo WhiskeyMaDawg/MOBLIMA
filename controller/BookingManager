@@ -250,11 +250,11 @@ public class BookingManager {
       position = Helper.readString();
       row = ShowtimeManager.getSeatRow(position);
       col = Integer.parseInt(position.substring(1));
-      if (row >=0 && col>=0 && col != 5 && col != 14 && col <= 19) {
+      if (row >=0 && col>=0 && col != 4 && col != 14 && col <= 19) {
         break;
       }
       System.out.println("\nInvalid row and column!");
-    } while (col == 5 || col == 14 || row < 0 || col < 0 || col > 20);
+    } while (col == 4 || col == 14 || row < 0 || col < 0 || col > 20);
     switch (layout){
       case LARGE:
         if (position.equals("L1") || position.equals("L2")) {
