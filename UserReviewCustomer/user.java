@@ -55,7 +55,7 @@ class User extends Person{
     System.out.print("Are you a customer? ");
     String response = sc.nextLine();
     response=response.toLowerCase();
-    if(response''==)
+    if(response=="")
   }
   public userType getUserType(){
     return userType;
