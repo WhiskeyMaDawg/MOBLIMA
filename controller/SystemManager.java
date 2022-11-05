@@ -17,7 +17,7 @@ public class SystemManager { //controller class for system configurations
 	    Database.saveFileIntoDatabase(FileType.HOLIDAYS);
 	    System.out.println("Holiday on " + date + " added!");
 	    return true; 
-    }
+	}
 	
 	private static ArrayList<MoviesType> getTicketTypes() { //get ticket types based on MoviesType list
 	    ArrayList<MoviesType> ticketTypes = new ArrayList<MoviesType>();
@@ -25,7 +25,7 @@ public class SystemManager { //controller class for system configurations
 	    	ticketTypes.add(type);
 	    }
 	    return ticketTypes;
-    }
+    	}
 	
 	public static boolean updateTicketPrices() { //set ticket price based on MoviesType
 		displayTicketPricesStaff();
