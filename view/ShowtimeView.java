@@ -35,7 +35,7 @@ public class ShowtimeView extends MainView {
     }
 
     public void viewApp() { //view app
-        int choice = -1;
+        int choice;
         do {
             printMenu();
             choice = Helper.readInt(1, 5);
