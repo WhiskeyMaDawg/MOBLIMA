@@ -6,7 +6,6 @@ import src.database.*;
 import src.database.FileType;
 import src.helper.*;
 import src.model.*;
-import src.model.enums.AgeGroup;
 import src.model.enums.LayoutType;
 import src.model.enums.SeatType;
 
@@ -258,34 +257,34 @@ public class BookingManager {
     } while (col == 5 || col == 14 || row < 0 || col < 0 || col > 20);
     switch (layout){
       case LARGE:
-        if (position.equals("K1") || position.equals("K2")) {
-          showtime.getSeatAt(11, 1).setPosition("K1");
-          showtime.getSeatAt(11, 2).setPosition("K2");
-        } else if (position.equals("K3") || position.equals("K4")) {
-          showtime.getSeatAt(11, 3).setPosition("K3");
-          showtime.getSeatAt(11, 4).setPosition("K4");
-        } else {
-          showtime.getSeatAt(row + 1, col).setPosition(position);
-        }
-        break;
-      case MEDIUM:
-        if (position.equals("I1") || position.equals("I2")) {
-          showtime.getSeatAt(9, 1).setPosition("I1");
-          showtime.getSeatAt(9, 2).setPosition("I2");
-        } else if (position.equals("I3") || position.equals("I4")) {
-          showtime.getSeatAt(9, 3).setPosition("I3");
-          showtime.getSeatAt(9, 4).setPosition("I4");
+        if (position.equals("L1") || position.equals("L2")) {
+          showtime.getSeatAt(11, 1).setPosition("L1");
+          showtime.getSeatAt(11, 2).setPosition("L2");
+        } else if (position.equals("L3") || position.equals("L4")) {
+          showtime.getSeatAt(11, 3).setPosition("L3");
+          showtime.getSeatAt(11, 4).setPosition("L4");
         } else {
           showtime.getSeatAt(row + 1, col).setPosition(position);
         }
         break;
       case SMALL:
-        if (position.equals("G1") || position.equals("G2")) {
-          showtime.getSeatAt(7, 1).setPosition("G1");
-          showtime.getSeatAt(7, 2).setPosition("G2");
-        } else if (position.equals("G3") || position.equals("G4")) {
-          showtime.getSeatAt(7, 3).setPosition("G3");
-          showtime.getSeatAt(7, 4).setPosition("G4");
+        if (position.equals("H1") || position.equals("H2")) {
+          showtime.getSeatAt(9, 1).setPosition("H1");
+          showtime.getSeatAt(9, 2).setPosition("H2");
+        } else if (position.equals("H3") || position.equals("H4")) {
+          showtime.getSeatAt(9, 3).setPosition("H3");
+          showtime.getSeatAt(9, 4).setPosition("H4");
+        } else {
+          showtime.getSeatAt(row + 1, col).setPosition(position);
+        }
+        break;
+      case MEDIUM:
+        if (position.equals("J1") || position.equals("J2")) {
+          showtime.getSeatAt(7, 1).setPosition("J1");
+          showtime.getSeatAt(7, 2).setPosition("J2");
+        } else if (position.equals("J3") || position.equals("J4")) {
+          showtime.getSeatAt(7, 3).setPosition("J3");
+          showtime.getSeatAt(7, 4).setPosition("J4");
         } else {
           showtime.getSeatAt(row + 1, col).setPosition(position);
         }
@@ -311,14 +310,14 @@ public class BookingManager {
       } while (newSeat.getBooked() || seatList.contains(newSeat));
       switch(layout){
         case LARGE:
-          if (newSeat.getPosition().equals("K1") || newSeat.getPosition().equals("K2")) {
+          if (newSeat.getPosition().equals("L1") || newSeat.getPosition().equals("L2")) {
             Seat couple1 = showtime.getSeatAt(11, 1);
             Seat couple2 = showtime.getSeatAt(11, 2);
             System.out.println("\n" + couple1.getSeatType().getLabel() + " Seat " + couple1.getPosition() + " & "
                 + " Seat " + couple2.getPosition() + " selected...");
             seatList.add(couple1);
             seatList.add(couple2);
-          } else if (newSeat.getPosition().equals("K3") || newSeat.getPosition().equals("K4")) {
+          } else if (newSeat.getPosition().equals("L3") || newSeat.getPosition().equals("L4")) {
             Seat couple1 = showtime.getSeatAt(11, 3);
             Seat couple2 = showtime.getSeatAt(11, 4);
             System.out.println("\n" + couple1.getSeatType().getLabel() + " Seat " + couple1.getPosition() + " & "
@@ -331,14 +330,14 @@ public class BookingManager {
           }
           break;
         case MEDIUM:
-          if (newSeat.getPosition().equals("I1") || newSeat.getPosition().equals("I2")) {
+          if (newSeat.getPosition().equals("J1") || newSeat.getPosition().equals("J2")) {
             Seat couple1 = showtime.getSeatAt(9, 1);
             Seat couple2 = showtime.getSeatAt(9, 2);
             System.out.println("\n" + couple1.getSeatType().getLabel() + " Seat " + couple1.getPosition() + " & "
                 + " Seat " + couple2.getPosition() + " selected...");
             seatList.add(couple1);
             seatList.add(couple2);
-          } else if (newSeat.getPosition().equals("I3") || newSeat.getPosition().equals("I4")) {
+          } else if (newSeat.getPosition().equals("J3") || newSeat.getPosition().equals("J4")) {
             Seat couple1 = showtime.getSeatAt(9, 3);
             Seat couple2 = showtime.getSeatAt(9, 4);
             System.out.println("\n" + couple1.getSeatType().getLabel() + " Seat " + couple1.getPosition() + " & "
@@ -351,14 +350,14 @@ public class BookingManager {
           }
           break;
         case SMALL:
-          if (newSeat.getPosition().equals("G1") || newSeat.getPosition().equals("G2")) {
+          if (newSeat.getPosition().equals("H1") || newSeat.getPosition().equals("H2")) {
             Seat couple1 = showtime.getSeatAt(7, 1);
             Seat couple2 = showtime.getSeatAt(7, 2);
             System.out.println("\n" + couple1.getSeatType().getLabel() + " Seat " + couple1.getPosition() + " & "
                 + " Seat " + couple2.getPosition() + " selected...");
             seatList.add(couple1);
             seatList.add(couple2);
-          } else if (newSeat.getPosition().equals("G3") || newSeat.getPosition().equals("G4")) {
+          } else if (newSeat.getPosition().equals("H3") || newSeat.getPosition().equals("H4")) {
             Seat couple1 = showtime.getSeatAt(7, 3);
             Seat couple2 = showtime.getSeatAt(7, 4);
             System.out.println("\n" + couple1.getSeatType().getLabel() + " Seat " + couple1.getPosition() + " & "
@@ -439,4 +438,3 @@ public class BookingManager {
     BookingManager.findBooking(email);
   }
 }
-
