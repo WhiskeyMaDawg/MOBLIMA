@@ -49,7 +49,8 @@ public class BookingManager {
     double adjustedPrice;
     double multiplier = 1.07; //GST-accounted
 
-    // Child & Senior Citizen 50% cheaper
+    // Student & Senior Citizen 25% cheaper
+    // Child 50% cheaper
     if (movieGoer.getAgeGroup() == AgeEnum.CHILD) multiplier*=0.5;
     else if (movieGoer.getAgeGroup() == AgeEnum.SENIOR || movieGoer.getAgeGroup() == AgeEnum.STUDENT) {
       multiplier *= 0.75;
