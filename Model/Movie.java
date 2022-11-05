@@ -157,8 +157,6 @@ public abstract class Movie implements Serializable, Comparable<Movie> {
         this.overallRating = overallRating;
     }
 
-    /**
-     * Adds a new @param review to the list of {@link Reviews} of the movie
     public void addReview(Review review) {
         reviews.add(review);
     }
