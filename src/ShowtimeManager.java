@@ -1,0 +1,405 @@
+package controller;
+
+import java.util.ArrayList;
+
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+import database.Database;
+import database.FileType;
+import model.*;
+import model.enums.LayoutType;
+import model.enums.ShowStatus;
+import Helper.Helper;
+
+
+
+public class ShowtimeManager {
+ /*
+  * HashMap to get row number from alphabets
+  */
+ private static HashMap<Integer, String> alphaRow = new HashMap<Integer, String>();
+
+ /**
+  * Constructor of ShowtimeManager
+  */
+ public ShowtimeManager() {
+   ShowtimeManager.initializeHashMap();
+ }
+
+ /**
+  * Initialise HashMap
+  */
+ public static void initializeHashMap() {
+   alphaRow.put(0, "A");
+   alphaRow.put(1, "B");
+   alphaRow.put(2, "C");
+   alphaRow.put(3, "D");
+   alphaRow.put(4, "E");
+   alphaRow.put(5, "F");
+   alphaRow.put(6, "G");
+   alphaRow.put(7, "H");
+   alphaRow.put(8, "I");
+   alphaRow.put(9, "J");
+   alphaRow.put(10, "K");
+   alphaRow.put(11, "L");
+ }
+
+ public static void initShowtime() {
+   ShowtimeManager.initializeHashMap();
+
+   ArrayList<Movie> newMovies = MovieManager.getAllMovieList();
+   ArrayList<Cineplex> newCineplex = CineplexManager.getCineplexList();
+   ArrayList<Cinema> newCinema = new ArrayList<Cinema>();
+   ArrayList<String> newDate = new ArrayList<String>();
+
+   String strDate;
+
+   for (int j = 0; j < newCineplex.size(); j++) {
+     for (int i = 0; i < 10; i++) {
+       newCinema.add(newCineplex.get(j).getCinemaList().get(i));
+     }
+   }
+
+   for (int i = MovieManager.getTotalNumOfMovie() * 2-1; i>=0 ; i--) {
+     newDate.add(Helper.generateRandomDate());
+   }
+
+   Collections.shuffle(newDate);
+
+   for (int i = 0; i < MovieManager.getTotalNumOfMovie(); i++) {
+     if (newMovies.get(i).getStatus() == ShowStatus.NOW_SHOWING
+         || newMovies.get(i).getStatus() == ShowStatus.PREVIEW) {
+       createShowtime(newDate.get(i), newMovies.get(i), newCinema.get(i));
+       createShowtime(newDate.get(2 * i), newMovies.get(i), newCinema.get(i));
+     }
+   }
+
+   ShowtimeManager.displayAllShowtime();
+ }
+
+
+ protected static void displayShowtime(ArrayList<Showtime> showtimes, String from) {
+   if (showtimes.size() < 1) {
+     System.out.println("No showtimes available");
+   }
+
+   if (from.equals("")) {
+     System.out.println("Showtimes(s):");
+   } else {
+     System.out.println("Showtimes(s) for this " + from + ":");
+   }
+
+   for (int i = 0; i < showtimes.size(); i++) {
+     System.out.println("\nShowtime " + "(" + (i + 1) + ")");
+     displayShowtimeDetails(showtimes.get(i), from);
+   }
+ }
+ private static ArrayList<Showtime> getMovieShowtime(Movie movie) {
+   ArrayList<Showtime> showtimes = new ArrayList<Showtime>();
+
+   for (Showtime showtime : Database.SHOWTIME.values()) {
+     if (showtime.getMovie().getTitle().equals(movie.getTitle())) {
+       showtimes.add(showtime);
+     }
+   }
+
+   return showtimes;
+ }
+ private static boolean createShowtime(String time, Movie movie, Cinema cinema) {
+   int sId = Helper.generateUniqueId(Database.SHOWTIME);
+   String showtimeId = String.format("S%04d", sId);
+   Showtime newShowtime = new Showtime(showtimeId, time, movie, cinema, LayoutType.MEDIUM);
+   Database.SHOWTIME.put(showtimeId, newShowtime);
+   Database.numOfShowtimes+=1;
+   Database.saveFile(FileType.SHOWTIME);
+   return true;
+ }
+
+ public static boolean onCreateShowtime() {
+   System.out.println("Which movie would you like to create a showtime for?\n");
+
+   if (MovieManager.displayListOfBookableMovies()) {
+     Movie selectedMovie = MovieManager.selectMovie();
+     String date;
+     do {
+       date = Helper.setDate(false, false);
+     } while (date.equals(""));
+     System.out.println(date);
+     System.out.println("\nWhich cineplex would you like to air this movie?\n");
+     CineplexManager.displayExistingCineplex();
+     Cineplex selectedCineplex = CineplexManager.selectCineplex();
+     System.out.println("Which cinema in this cineplex would you like to pick?\n");
+     Cinema cinema = CineplexManager.selectCinema(selectedCineplex);
+     ShowtimeManager.createShowtime(date, selectedMovie, cinema);
+     return true;
+   }
+
+   return false;
+ }
+ 
+ protected static ArrayList<Showtime> getShowtime(String type) {
+   ArrayList<Showtime> showtimes = new ArrayList<Showtime>();
+
+   for (Showtime showtime : Database.SHOWTIME.values()) {
+     if (type.equals("all")) {
+       showtimes.add(showtime);
+     } 
+     else if (type.equals("bookable") && (showtime.getMovie().getStatus() == ShowStatus.NOW_SHOWING
+         || showtime.getMovie().getStatus() == ShowStatus.PREVIEW)) {
+       showtimes.add(showtime);
+     }
+   }
+
+   return showtimes;
+ }
+
+ private static String selectShowtime(ArrayList<Showtime> showtimes) {
+   System.out.println("Select a showtime by entering it's index:");
+   int option = Helper.readInt(1, (showtimes.size() + 1));
+   Showtime selectedShowtime = showtimes.get(option - 1);
+   return selectedShowtime.getShowtimeId();
+ }
+
+ public static void displayAllShowtime() {
+   if (Database.numOfShowtimes == 0) {
+     System.out.println("No showtimes found...\n");
+     return;
+   }
+
+   for (Showtime showtime : Database.SHOWTIME.values()) {
+     System.out.println();
+     System.out.println(String.format("%-30s", ""));
+     System.out.println(String.format("%-10s: %s", "Cinema Type",
+         showtime.getCinema().getIsPlatinum() ? "Platinum" : "Normal"));      System.out.println(String.format("%-10s: %s", "Time", showtime.getTime()));
+     System.out.println(String.format("%-10s: %s", "Showtime ID", showtime.getShowtimeId()));
+     System.out.println(String.format("%-10s: %s", "Movie", showtime.getMovie().getTitle()));
+     System.out
+         .println(String.format("%-10s: %s", "Location", showtime.getCinema().getCineplex()));
+     System.out.println(String.format("%-30s", ""));
+     System.out.println();
+   }
+ }
+
+ protected static void displayShowtimeLayout(Showtime showtime, ArrayList<Seat> seat) {
+   System.out.println();
+   System.out.println("                                       -------Screen------");
+   System.out.println("      1   2   3   4   5   6   7   8   9   10   11   12   13   14   15    16   17   18   19  20");
+   for (int row = 0; row <= 11; row++) {
+     System.out.print(alphaRow.get(row) + "   ");
+     for (int col = 0; col <= 19; col++) {
+       if (showtime.getSeatAt(row + 1, col + 1) == null)
+         System.out.print("   ");
+       else {
+         if (showtime.getSeatAt(row + 1, col + 1).getBooked()) {
+           System.out.print(" [X] ");
+         } else {
+           if(seat.contains(showtime.getSeatAt(row + 1, col + 1))){
+             System.out.print(" [O] ");
+           }else{
+             System.out.print(" [ ] ");
+           }
+         }
+       }
+     }
+     System.out.println();
+   }
+   LayoutType temp = showtime.getLayoutType();
+   switch(temp){
+     case LARGE:
+       System.out.println();
+       System.out.println("Note:");
+       System.out.println("L1-L4 >> Couple Seat (L1 & L2 must be booked together, L3 & L4 must be booked together)");
+       System.out.println("L6-L14 >> Elite Seat");
+       System.out.println("L16-L20 >> Ultima Seat");
+       System.out.println();
+       System.out.println("[X] >> Booked Seat");
+       System.out.println("[O] >> Selected Seat");
+       System.out.println("[ ] >> Empty Seat");
+       System.out.println();
+       break;
+   case MEDIUM:
+       System.out.println();
+       System.out.println("Note:");
+       System.out.println("J1-J4 >> Couple Seat (J1 & J2 must be booked together, J3 & J4 must be booked together)");
+       System.out.println("J6-J14 >> Elite Seat");
+       System.out.println("J16-J20 >> Ultima Seat");
+       System.out.println();
+       System.out.println("[X] >> Booked Seat");
+       System.out.println("[O] >> Selected Seat");
+       System.out.println("[ ] >> Empty Seat");
+       System.out.println();
+       break;
+   case SMALL:
+       System.out.println();
+       System.out.println("Note:");
+       System.out.println("I1-I4 >> Couple Seat (I1 & I2 must be booked together, I3 & I4 must be booked together)");
+       System.out.println("I6-I13 >> Elite Seat");
+       System.out.println("I15-I17 >> Ultima Seat");
+       System.out.println();
+       System.out.println("[X] >> Booked Seat");
+       System.out.println("[O] >> Selected Seat");
+       System.out.println("[ ] >> Empty Seat");
+       System.out.println();
+       break;
+   }
+ }
+
+ public static void displayShowtimeDetails(Showtime showtime, String from) {
+   System.out.println(String.format("%-30s", ""));
+   System.out.println(String.format("%-10s: %s", "Showtime ID", showtime.getShowtimeId()));
+   System.out.println(String.format("%-10s: %s", "Time", showtime.getTime()));
+   System.out.println(
+     String.format("%-10s: %s", "Cinema Type", showtime.getCinema().getIsPlatinum() ? "Platinum" : "Normal"));
+   if (from.equals("cineplex") || from.equals("")) {
+     System.out.println(String.format("%-10s: %s", "Movie", showtime.getMovie().getTitle()));
+   }
+   System.out.println(String.format("%-10s: %s", "Location", showtime.getCinema().getCineplex()));
+   System.out.println(String.format("%-30s"));
+   System.out.println();
+ }
+
+ protected static Showtime getShowtimebyId(String showtimeId) {
+   if (Database.SHOWTIME.containsKey(showtimeId)) {
+     return Database.SHOWTIME.get(showtimeId);
+   }
+   return null;
+ }
+
+ protected static int getSeatRow(String position) {
+   String rowStr = position.substring(0, 1);
+   int row = Integer.MIN_VALUE;
+
+   for (Entry<Integer, String> entry : alphaRow.entrySet()) {
+     if (entry.getValue().equals(rowStr)) {
+       row = entry.getKey();
+     }
+   }
+   return row;
+ }
+
+ public static ArrayList<Showtime> getCineplexShowtime(Cineplex cineplex) {
+   ArrayList<Showtime> res = new ArrayList<Showtime>();
+
+   for (Showtime showtime : Database.SHOWTIME.values()) {
+     if (showtime.getCinema().getCineplex() == cineplex.getLocation()) {
+       res.add(showtime);
+     }
+   }
+
+   if (res.size() == 0) {
+     return null;
+   } else {
+     return res;
+   }
+ }
+
+ public static boolean removeShowtime() {
+   int option = Integer.MIN_VALUE;
+   ArrayList<Showtime> showtimes = getShowtime("all");
+   if (showtimes.size() <= 0) {
+     System.out.println("No showtimes found...");
+     return false;
+   } else {
+     displayShowtime(showtimes, "");
+     System.out.println("(" + (showtimes.size() + 1) + ") Return");
+     System.out.println("\nWhich showtime would you like to remove ?");
+     option = Helper.readInt(1, showtimes.size() + 1);
+     if (option != showtimes.size() + 1) {
+       Showtime showtime = showtimes.get(option - 1);
+       Database.SHOWTIME.remove(showtime.getShowtimeId());
+       Database.numOfShowtimes-=1;
+       Database.saveFile(FileType.SHOWTIME);
+       return true;
+     }
+   }
+
+   return false;
+
+ }
+
+ public static boolean updateShowtime() {
+   int option = Integer.MIN_VALUE;
+   if (ShowtimeManager.getShowtime("all").size() == 0) {
+     System.out.println("No showtimes found!");
+     return false;
+   } else {
+     System.out.println("Which showtime do you want to update ?");
+     ShowtimeManager.displayShowtime(ShowtimeManager.getShowtime("all"), "");
+     option = Helper.readInt(1, ShowtimeManager.getShowtime("all").size() + 1);
+     if (option != ShowtimeManager.getShowtime("all").size() + 1) {
+       Showtime showtime = ShowtimeManager.getShowtime("all").get(option - 1);
+       String showtimeId = showtime.getShowtimeId();
+       CineplexManager.displayExistingCineplex();
+       System.out.println("\nUpdate Cineplex to: ");
+       Cineplex newCineplex = CineplexManager.selectCineplex();
+       System.out.println("Cineplex selected: " + newCineplex.getLocationStr());
+       System.out.println("Update Cinema to: ");
+       Cinema newCinema = CineplexManager.selectCinema(newCineplex);
+       System.out.println("Cinema selected: " + newCinema.getCinemaCode());
+       showtime.setCinema(newCinema);
+       Database.SHOWTIME.remove(showtime.getShowtimeId());
+       Database.SHOWTIME.put(showtimeId, showtime);
+       Database.saveFile(FileType.MOVIES);
+       return true;
+     }
+   }
+
+   return false;
+ }
+
+ protected static void removeShowtimeByMovie(Movie movie) {
+   HashMap<String, Showtime> updatedShowtime = new HashMap<String, Showtime>();
+
+   for (Showtime showtime : Database.SHOWTIME.values()) {
+     if (!showtime.getMovie().getTitle().equals(movie.getTitle())) {
+       updatedShowtime.put(showtime.getShowtimeId(), showtime);
+     }
+   }
+   Database.numOfShowtimes = updatedShowtime.size();
+   Database.SHOWTIME = updatedShowtime;
+   Database.saveFile(FileType.SHOWTIME);
+ }
+
+
+ protected static void removeShowtimeByCineplex(Cineplex cineplex) {
+   HashMap<String, Showtime> updatedShowtime = new HashMap<String, Showtime>();
+
+   for (Showtime showtime : Database.SHOWTIME.values()) {
+     if (showtime.getCinema().getCineplex() != cineplex.getLocation()) {
+       updatedShowtime.put(showtime.getShowtimeId(), showtime);
+     }
+   }
+   Database.numOfShowtimes = updatedShowtime.size();
+   Database.SHOWTIME = updatedShowtime;
+   Database.saveFile(FileType.SHOWTIME);
+ }
+
+ public static void handleShowtimeSelection(Movie movie, String username) {
+   ArrayList<Showtime> movieShowtimes = ShowtimeManager.getMovieShowtime(movie);
+   if (movieShowtimes.size() == 0 || movieShowtimes == null) {
+     System.out.println("No showtimes available");
+     Helper.pressAnyKeyToContinue();
+     return;
+   } else {
+     ShowtimeManager.displayShowtime(movieShowtimes, "movie");
+   }
+   String showtimeId = ShowtimeManager.selectShowtime(movieShowtimes);
+   BookingManager.promptBooking(showtimeId, username);
+ }
+
+ public static void handleShowtimeSelection(Cineplex cineplex, String username) {
+   ArrayList<Showtime> movieShowtimes = ShowtimeManager.getCineplexShowtime(cineplex);
+   if (movieShowtimes.size() == 0 || movieShowtimes == null) {
+     System.out.println("No showtimes available");
+     Helper.pressAnyKeyToContinue();
+   } else {
+     ShowtimeManager.displayShowtime(movieShowtimes, "cineplex");
+   }
+   String showtimeId = ShowtimeManager.selectShowtime(movieShowtimes);
+   BookingManager.promptBooking(showtimeId, username);
+ }
+
+}
